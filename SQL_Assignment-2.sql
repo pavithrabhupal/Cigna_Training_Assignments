@@ -1,4 +1,4 @@
------------------------------------------------------------------------------ONLINE STORE INVENTORY-----------------------------------------------------------------------------------------------
+--------------------------------------------------------------ONLINE STORE INVENTORY-----------------------------------------------------------------------------------------------
 
 --Create Database
 CREATE DATABASE Online_Store_Inventory;
@@ -51,12 +51,12 @@ INSERT INTO Customers (Customer_ID, First_Name, Last_Name, E_mail, Phone) VALUES
 (2, 'Alia', 'Mark', 'alia@gmail.com', '+918234545674');
 
 -- Inserting orders
-INSERT INTO Orders (Order_ID, Customer_ID, Total_Amount) VALUES
-(1098, 1, 5000),
-(2876, 2, 20000);
+INSERT INTO Orders (Order_ID, Customer_ID, Order_Data, Total_Amount) VALUES
+(1098, 1, SYSDATE, 5000),
+(2876, 2, SYSDATE, 20000);
 
 -- Inserting order details
-INSERT INTO Order_Details (ODeatil_ID, Quantity, Order_ID, Product_ID) VALUES
+INSERT INTO Order_Details (ODeatil_ID, Quantities, Order_ID, Product_ID) VALUES
 (1, 1, 1098, 101),
 (2, 2, 2876, 305);
 
@@ -66,9 +66,9 @@ FROM Product
 WHERE Stock <20;
 
 --Calculate the total amount spent by each customer
-SELECT SUM(O.Total_amount)
+SELECT SUM(O.Total_amount) AS Total_Amount
 FROM Customer C
-INNER JOIN Orders O ON C.Customer_ID = O.Customer_ID
+JOIN Orders O ON C.Customer_ID = O.Customer_ID
 GROUP BY C.Customer_ID;
 
 --Update product stock quantities after orders are placed to refelect purchased items
