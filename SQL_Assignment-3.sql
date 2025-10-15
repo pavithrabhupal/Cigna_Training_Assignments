@@ -35,6 +35,8 @@ INSERT INTO Emp VALUES(1015, 'Jane', 'Supply Manager', 40000, 40);
 INSERT INTO Emp VALUES(1016, 'Clark', 'Salesman', 18000, 30);
 INSERT INTO Emp VALUES(1017, 'Mark', 'Research Lead', 55000, 20);
 INSERT INTO Emp VALUES(1018, 'Antony', 'Audit Manager', 55000, 10);
+INSERT INTO Emp VALUES(1019, 'Mary', 'Audit Manager', 45000, 10);
+INSERT INTO Emp VALUES(1020, 'Marsha', 'Audit Manager', 35000, 10);
 
 ---------------------------------------------------------QUERY---------------------------------------------------------------
 
@@ -78,7 +80,7 @@ GROUP BY D.Dname
 HAVING COUNT(E.Emp_No) > 3;
 
 --8. Display employees who work in the same location as the ACCOUNTING department.
-SELECT E.Ename, E.Job, D.Loc
+SELECT E.Ename, D.Loc
 FROM Emp E
 JOIN Dept D ON E.Dept_No = D.Dept_No
 WHERE D.Loc = (SELECT Loc FROM Dept WHERE Dname = 'Accounting');
@@ -102,3 +104,43 @@ WHERE E.Salary > (
   FROM Emp E2
   WHERE E2.Dept_No = E.Dept_No
   );
+
+----------------------------------------------------------Check Subquery-----------------------------------------------------
+--1. Single-row Subquery
+SELECT Ename, Salary 
+FROM Emp 
+WHERE Salary > (SELECT AVG(Salary) FROM Emp);
+
+--2. Multi-row Subquery
+SELECT Ename, Dept_No 
+FROM Emp
+WHERE Dept_No IN (SELECT Dept_No FROM Dept WHERE Loc= 'MUM');
+
+--3. Multi-column Subquery
+SELECT Emp_No, Ename, Job, Dept_No 
+FROM Emp
+WHERE (Job, Dept_No) IN 
+      (SELECT Job, Dept_No FROM Emp WHERE Emp_No = 1018); 
+
+--4. Correlated Subquery
+SELECT E.Ename, E.Salary, E.Dept_No 
+FROM Emp E 
+WHERE E.Salary > (SELECT AVG(Salary) 
+FROM Emp
+WHERE Dept_No = E.Dept_No); 
+
+--5. In the WHERE Clause
+SELECT * 
+FROM Emp
+WHERE deptno IN (SELECT deptno FROM DEPT WHERE Loc= 'CHICAGO'); 
+
+--6) In the HAVING Claus
+ SELECT deptno, AVG(Salary) 
+FROM Emp 
+GROUP BY deptno 
+HAVING AVG(Salary) > (SELECT AVG(Salary) FROM Emp);
+
+--7) In the SELECT Clause
+SELECT e.emp_name, 
+       (SELECT dept_name FROM DEPT d WHERE d.deptno = e.deptno) AS department 
+FROM Emp e;
