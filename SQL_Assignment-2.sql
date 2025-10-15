@@ -52,31 +52,30 @@ INSERT INTO Customers (Customer_ID, First_Name, Last_Name, E_mail, Phone) VALUES
 
 -- Inserting orders
 INSERT INTO Orders (Order_ID, Customer_ID, Total_Amount) VALUES
-(1098, 1, TO_DATE('2025-01-10','YYYY-MM-DD'), 5000),
-(2876, 2, TO_DATE('2025-01-09','YYYY-MM-DD'), 20000);
+(1098, 1, 5000),
+(2876, 2, 20000);
 
 -- Inserting order details
 INSERT INTO Order_Details (ODeatil_ID, Quantity, Order_ID, Product_ID) VALUES
-(1, 1, 1, 50),
-(2, 2, 2, 100);
+(1, 1, 1098, 101),
+(2, 2, 2876, 305);
 
+--Retrive products with low stock (Ex: less than 20 units)
 SELECT * 
-FROM Products 
+FROM Product 
 WHERE Stock <20;
 
-SELECT SUM(O.order_amt)
-FROM Customers C
-INNER JOIN Orders O ON C.customer_id = O.customer_id
-GROUP BY C.customer_name;
+--Calculate the total amount spent by each customer
+SELECT SUM(O.Total_amount)
+FROM Customer C
+INNER JOIN Orders O ON C.Customer_ID = O.Customer_ID
+GROUP BY C.Customer_ID;
 
-UPDATE Products P
+--Update product stock quantities after orders are placed to refelect purchased items
+UPDATE Product P
 SET P.Stock = P.Stock - (
-    SELECT OD.qty
-    FROM OrderDetails OD
-    WHERE OD.product_id = P.product_id
+    SELECT OD.Quantities
+    FROM Order_Details OD
+    WHERE OD.Product_ID = P.Product_ID
 )
-WHERE P.product_id IN (SELECT DISTINCT product_id FROM OrderDetails);
-
-
-
-
+WHERE P.Product_ID IN (SELECT DISTINCT Product_ID FROM Order_Details);
